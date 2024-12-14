@@ -54,9 +54,17 @@ const apolloServer = new ApolloServer({
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  family: 4 // Use IPv4, skip trying IPv6
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => {
+  console.error('MongoDB connection error:', err);
+  process.exit(1); // Exit the process if we can't connect to the database
+});
 
 // Start server
 const startServer = async () => {
